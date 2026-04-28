@@ -1,0 +1,54 @@
+{
+  "name": "@superwhisper/pi",
+  "version": "1.0.0",
+  "description": "Superwhisper voice integration extension for Pi - get voice notifications when tasks complete",
+  "type": "module",
+  "keywords": [
+    "pi",
+    "pi-package",
+    "pi-extension",
+    "superwhisper",
+    "voice",
+    "notifications",
+    "ai",
+    "coding-agent"
+  ],
+  "author": "Superwhisper",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superultrainc/pi-superwhisper"
+  },
+  "homepage": "https://superwhisper.com",
+  "bugs": {
+    "url": "https://github.com/superultrainc/pi-superwhisper/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "pi": {
+    "extensions": ["./extensions/superwhisper.ts"]
+  },
+  "files": [
+    "extensions",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test extensions/*.test.ts",
+    "prepublishOnly": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": ">=0.65.0"
+  },
+  "devDependencies": {
+    "@mariozechner/pi-coding-agent": "^0.70.6",
+    "@types/node": "^22.0.0",
+    "typebox": "^1.1.24",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
