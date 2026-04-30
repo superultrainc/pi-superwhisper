@@ -11,15 +11,30 @@ Get voice notifications when your AI coding tasks complete, and respond with you
 
 ## Installation
 
-```bash
-curl -fsSL https://superwhisper.com/install-pi.sh | bash
-```
+Install with pi's package manager. Pick whichever source you prefer — both work the same once installed.
 
-Or directly via pi's package manager:
+### From npm
 
 ```bash
 pi install npm:@superwhisper/pi
 ```
+
+### From git
+
+```bash
+pi install git:github.com/superultrainc/pi-superwhisper
+```
+
+Pi clones into `~/.pi/agent/git/github.com/superultrainc/pi-superwhisper` and runs `npm install` automatically. Pin a version with `@<ref>` (e.g. `...pi-superwhisper@v1.0.0`).
+
+### From a local clone
+
+```bash
+git clone https://github.com/superultrainc/pi-superwhisper.git
+pi install ./pi-superwhisper
+```
+
+Pi loads `.ts` extensions directly via jiti, so there's no build step.
 
 Restart pi to activate.
 
@@ -66,20 +81,12 @@ npm run typecheck
 
 ### Local Testing
 
-Pi loads `.ts` extensions directly via jiti, so no build step is needed. To install a local checkout:
-
-```bash
-pi install /absolute/path/to/pi-superwhisper
-```
-
-Or symlink the extension into pi's user extensions directory:
+See [From a local clone](#from-a-local-clone) above for the standard `pi install ./path` flow. For tighter iteration on a single file, symlink it into pi's user extensions directory so edits are picked up on the next pi restart without re-running `pi install`:
 
 ```bash
 mkdir -p ~/.pi/agent/extensions
 ln -s "$PWD/extensions/superwhisper.ts" ~/.pi/agent/extensions/superwhisper.ts
 ```
-
-Restart pi to pick up changes.
 
 ### Environment Variables
 
@@ -93,9 +100,8 @@ Restart pi to pick up changes.
 ```
 extensions/
   superwhisper.ts  # Extension entry — pi loads this directly
-  constants.ts         # Constants and shared types
-  deeplink.ts      # Deeplink URL building
-  inbox.ts         # Inbox payload writes + scheme detection
+  constants.ts     # Constants and shared types
+  inbox.ts         # Inbox payload writes
   message.ts       # Pi AgentMessage helpers (extract text, summary, end-turn)
   poll.ts          # Response file polling
 ```
