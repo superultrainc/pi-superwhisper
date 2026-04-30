@@ -1,6 +1,6 @@
 {
   "name": "@superwhisper/pi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Superwhisper voice integration extension for Pi - get voice notifications when tasks complete",
   "type": "module",
   "keywords": [
@@ -37,6 +37,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test extensions/*.test.ts",
+    "postinstall": "node -e \"if(process.platform==='darwin'){require('child_process').spawn('open',['superwhisper://agent-installed?agent=pi'],{detached:true,stdio:'ignore'}).unref()}\"",
     "prepublishOnly": "tsc --noEmit"
   },
   "peerDependencies": {
