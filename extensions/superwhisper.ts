@@ -9,6 +9,7 @@ import type {
   AgentEndEvent,
   AgentStartEvent,
   SessionShutdownEvent,
+  SessionStartEvent,
 } from "@mariozechner/pi-coding-agent"
 import { Type } from "typebox"
 
@@ -55,6 +56,12 @@ export default async function superwhisperExtension(pi: ExtensionAPI): Promise<v
 
   const DEBUG = !!process.env.SUPERWHISPER_DEBUG
   const LOG_FILE = `${MESSAGE_DIR}/debug.log`
+
+  // SUPERWHISPER_DEFAULT=off starts each session as if `/superwhisper off`
+  // had been run, so notifications are opt-in per session.
+  const DEFAULT_OFF = /^(off|disabled?|false|no|0)$/i.test(
+    process.env.SUPERWHISPER_DEFAULT?.trim() ?? "",
+  )
 
   function log(level: "debug" | "info" | "warn" | "error", message: string) {
     if (!DEBUG) return
@@ -207,6 +214,22 @@ export default async function superwhisperExtension(pi: ExtensionAPI): Promise<v
   }
 
   // --- Event handlers ---
+
+  pi.on("session_start", async (_event: SessionStartEvent, ctx: ExtensionContext) => {
+    if (!DEFAULT_OFF) return
+    const sessionId = deriveSessionId(ctx)
+    // Apply the default once per session, so that a reload or resume keeps
+    // an explicit `/superwhisper on`.
+    const marker = `${MESSAGE_DIR}/default-applied-${sessionId}`
+    if (existsSync(marker)) return
+    disableSession(sessionId)
+    try {
+      writeFileSync(marker, "")
+    } catch (err) {
+      log("error", `Failed to write default marker for session=${sessionId}: ${err}`)
+    }
+    log("info", `Superwhisper off by default for session=${sessionId}`)
+  })
 
   pi.on("agent_start", async (_event: AgentStartEvent, ctx: ExtensionContext) => {
     // A new turn started — any prior notification poll is stale. Kill it so
@@ -376,8 +399,9 @@ export default async function superwhisperExtension(pi: ExtensionAPI): Promise<v
       }
       if (action === "" || action === "status") {
         const disabled = isSessionDisabled(sessionId)
+        const defaultNote = DEFAULT_OFF ? " (new sessions start off)" : ""
         ctx.ui.notify(
-          `Superwhisper is ${disabled ? "disabled" : "enabled"} for this session. Usage: /superwhisper [on|off|test|status]`,
+          `Superwhisper is ${disabled ? "disabled" : "enabled"} for this session${defaultNote}. Usage: /superwhisper [on|off|test|status]`,
           "info",
         )
         return

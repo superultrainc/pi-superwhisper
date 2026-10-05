@@ -72,6 +72,8 @@ You can ask the agent to enable or disable Superwhisper voice notifications at a
 
 The toggle is session-scoped — it only affects the current Pi session and resets when you start a new one.
 
+New sessions start with notifications on. To make them opt-in instead, set `SUPERWHISPER_DEFAULT=off` in the environment Pi runs in. Each new session then starts as if you had run `/superwhisper off`, and `/superwhisper on` (or asking the agent to enable Superwhisper) turns it on for that session. The choice is kept across `/reload` and resuming the session.
+
 ## Development
 
 ```bash
@@ -93,6 +95,7 @@ ln -s "$PWD/extensions/superwhisper.ts" ~/.pi/agent/extensions/superwhisper.ts
 | Variable               | Default | Description                                                          |
 |------------------------|---------|----------------------------------------------------------------------|
 | `SUPERWHISPER_DEBUG`   | unset   | Set to `1` to write debug logs to `/tmp/superwhisper-agent/debug.log`|
+| `SUPERWHISPER_DEFAULT` | `on`    | Set to `off` to start each session with notifications disabled       |
 | `SUPERWHISPER_SCHEME`  | auto    | Override deeplink scheme (`superwhisper` vs `superwhisper-debug`)    |
 
 ### Project Structure
